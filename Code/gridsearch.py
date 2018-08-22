@@ -45,7 +45,7 @@ def run_process_limited_time(max_seconds,argdict):
 def main():
 
     argdict = { 'beta'            : 16,
-                'maxvaccprob'     : 0.94,
+                'maxvaccprob'     : 0.9,
                 'minvaccprob'     : 0.1,   #this serves as the standard deviation in max. vacc. prob.
                 'timesteps'       : 480,
                 'patchpop'        : 11020,
@@ -60,23 +60,27 @@ def main():
 
     # generate parameter permutations:
     patchpops  = list([num for num in np.arange(11000,101000,10000)])
-    vaxvar     = np.linspace(0.05,0.2,10.)
-    patchpops  = np.linspace(5000.,100000.,10.)
-    popstddevs = np.linspace(0.1,0.9,10.)
+    n = 5
+    m = 5
+    l = 5
+    vaxvar     = np.linspace(0.2,0.6,n)
+    patchpops  = np.linspace(5000.,100000.,m)
+    popstddevs = np.linspace(0.7,0.9,l)
     mparams    = list(itertools.product(vaxvar,patchpops,popstddevs))
 
     trns = 0
 
     # Should extend this to make better use of multiprocess
-    while trns in range(2):
+    while trns in range(n*l*m):
         print trns
         if trns%10==0: print(trns)
         argdict['minvaccprob']     = mparams[trns][0]
         argdict['patchpop']        = mparams[trns][1]
         argdict['popstddev']       = mparams[trns][2]
-        argdict['fn'] = "vaxvar"+str(argdict['minvaccprob'])+"_"+"popvar"+str(argdict['popstddev'])+"_"+"pop"+str(argdict['patchpop'])
+        argdict['fn'] = str(trns)+"_vaxvar"+str(argdict['minvaccprob'])+"_"+"popvar"+str(argdict['popstddev'])+"_"+"pop"+str(argdict['patchpop'])
         print argdict
         run_process_limited_time(6,argdict)
+        trns += 1
 
 
 if __name__ == "__main__":
