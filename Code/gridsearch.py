@@ -50,7 +50,7 @@ def main():
                 'timesteps'       : 480,
                 'patchpop'        : 11020,
                 'birthrate'       : 10.,
-                'popstddev'       : 3.6,
+                'popstddev'       : 0.1,
                 'images'          : 0,
                 'logs'            : 1,
                 'fn'              : "payload",
