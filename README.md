@@ -1,7 +1,13 @@
 # Metapopulations
 Simulation of disease systems consisting of spatially separated meta-populations.
 
-The base code for the simulation is in metapop.cpp. This code takes the example command line
+The base code for the simulation is in metapop.cpp. 
+
+compile with: 
+
+g++ -std=c++14 -O2 metapop.cpp lodepng.cpp -larmadillo -o metapop
+
+run with:
 
 ./metapop beta 8.0 maxvaccprob 0.84 minvaccprob 0.1 timesteps 480 patchpop 10000 birthrate 40.0 popstddev 0.0 images 1 logs 1 fn pop10kdev0.1 iter 10 stochastic 0
 
