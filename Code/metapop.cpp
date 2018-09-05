@@ -30,7 +30,7 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-#include "alpha10c0.1/betamalpha10c0.1.hpp"
+#include "mixingMatrices/Diagonal.hpp"
 #define loadbmat 1
 
 
