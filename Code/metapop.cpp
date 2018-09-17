@@ -13,6 +13,8 @@
 #include <algorithm>
 // #include <armadillo>
 
+//compile with g++ -std=c++14 -O2 metapop.cpp lodepng.cpp  -o metapop
+
 #include "lodepng.h"
 #include "basiccolors.hpp"
 
@@ -30,7 +32,7 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-#include "mixingMatrices/Diagonal.hpp"
+#include "mixingMatrices/Test.hpp"
 #define loadbmat 1
 
 
@@ -423,6 +425,7 @@ epistepTSIRVmetaAge(
 
 	    float fullBetaI = 0.0;
 	    float bi = 0.0;
+        float mRate, vRate;
 	    possibleIs = 0.0;
 	    possibleSs = 0.0;
 
@@ -437,20 +440,19 @@ epistepTSIRVmetaAge(
 	    float tpop = loc_S + loc_I + loc_R + loc_V;
 
 	    float BetaN = (Beta*pars.betamean)/tpop; //  "Beta" here is merely the seasonal component
-
-	    for(int nx=0; nx<nptch; nx++) {
-		if(betaMatrix[ii][nx] > 0.0) { //adds up all beta*I for all patches that have non-zero connectivity with this patch
-		    bi = BetaN  * betaMatrix[ii][nx] * I[nx][j];  // beta*I
-		    fullBetaI += bi;
-		}
-	    }
+        
+        std::random_device r;
+        std::seed_seq seed_seq{r(),r(),r()};
+        std::mt19937 generator{seed_seq};
+        //std::default_random_engine generator();
+	    
 
 	    // S′ = −βSI,
-	    possibleSs = loc_S + (-fullBetaI * loc_S);
+	    possibleSs = loc_S + (-BetaN * loc_S);
 	    // R′ = αI
 	    possibleRs = loc_R + (alpha * loc_I);
 	    // I′ =βSI−αI,
-	    possibleIs = loc_I + (fullBetaI * loc_S - (alpha * loc_I));
+	    possibleIs = loc_I + (BetaN * loc_S - (alpha * loc_I));
 
 	    fullBetaI = 0.0;
 
@@ -472,13 +474,31 @@ epistepTSIRVmetaAge(
 	     //}
         
         
-        float v1 = rand()%100;
-        v1 /= 100.;
-        //cout << v1 << endl;
+        /*float v1 = rand();
         if(v1>0.99){
             possibleIs += 1;
+        }*/
+        //Stochastic introduction: draw an integer from a Poisson distribution with rate equal to the sum of virgin introduction and migratory introduction
+        mRate = 0.;
+        for(int nx=0; nx<nptch; nx++) {
+            if(betaMatrix[ii][nx] > 0.0) { //adds up all beta*I for all patches that have non-zero connectivity with this patch
+                if(nx!=j)
+                {mRate += betaMatrix[ii][nx] * I[nx][j];}  // beta*I}
+                if(nx==j)
+                {mRate += 0.;}
+            }
         }
+                if(mRate > 100.){
+            mRate = 100.;
+        }
+        vRate = 0.0005;
         
+        std::poisson_distribution<int> pDist(vRate+mRate);
+        int intros = pDist(generator);
+        //std::cout << "intro:" << intros << std::endl;
+        //std::cout <<"rate: " << mRate << " intros " << intros << std::endl;
+        
+        possibleIs += intros;
 
 	    It[ii][j] = possibleIs;
 	    Rt[ii][j] = possibleRs;
