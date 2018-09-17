@@ -32,7 +32,7 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-#include "mixingMatrices/Test.hpp"
+#include "mixingMatrices/BetaMc0.1.hpp"
 #define loadbmat 1
 
 
@@ -448,13 +448,11 @@ epistepTSIRVmetaAge(
 	    
 
 	    // S′ = −βSI,
-	    possibleSs = loc_S + (-BetaN * loc_S);
+	    possibleSs = loc_S + (-BetaN * loc_S*loc_I);
 	    // R′ = αI
 	    possibleRs = loc_R + (alpha * loc_I);
 	    // I′ =βSI−αI,
-	    possibleIs = loc_I + (BetaN * loc_S - (alpha * loc_I));
-
-	    fullBetaI = 0.0;
+	    possibleIs = loc_I + (BetaN * loc_S*loc_I) - (alpha * loc_I);
 
 	    if(possibleIs < 0 ) {
 		//assert(possibleIs > 0 );
@@ -467,13 +465,6 @@ epistepTSIRVmetaAge(
 
 	    tsi += possibleIs;
 
-	    // //"virgin" introduction   //random infecteds appearing in patches
-	     //float v1 = rand() % nptch;
-	     //if(v1 == 0) {
-	    	//possibleIs += bindist(generator);
-	     //}
-        
-        
         /*float v1 = rand();
         if(v1>0.99){
             possibleIs += 1;
@@ -488,10 +479,11 @@ epistepTSIRVmetaAge(
                 {mRate += 0.;}
             }
         }
-                if(mRate > 100.){
-            mRate = 100.;
-        }
-        vRate = 0.0005;
+        if(mRate > 10.){
+            mRate = 10.;
+            }
+                
+        vRate = 0.01;
         
         std::poisson_distribution<int> pDist(vRate+mRate);
         int intros = pDist(generator);
@@ -504,12 +496,9 @@ epistepTSIRVmetaAge(
 	    Rt[ii][j] = possibleRs;
 
 	    // Vaccination:
-	    // if(j == 0){
-
 	    float tsbirths = (tpop / 1000.0) * (births/12.0); // 12 because br is measured at half year. births per thousand per six months (half a year is 12 time steps)
-
 	    float ftsbirths = tsbirths;
-	    float vaccedbirths = (vax[ii])*(ftsbirths);  //vaccination is implemented in the birth rate
+	    float vaccedbirths = (vax[ii])*(ftsbirths);       //vaccination is implemented in the birth rate
 
 	    Vt[ii][j] = V[ii][j] + vaccedbirths;
 	    St[ii][j] = possibleSs + (ftsbirths - vaccedbirths);
@@ -684,37 +673,7 @@ epiTSIRVmeta(
 	}
     }
 
-    // ///  print beta matrix:
-    // stringstream bms;
-    // for(int  i=0;i<nptch;i++){
-    //   for(int j=0;j<nptch;j++){
-    //     bms << betaMatrix[i][j] << " ";
-    //   }
-    //   bms << endl;
-    // }
-    // std::ofstream bms_ofst("bms.txt");
-    // if (bms_ofst.is_open()){
-    //   bms_ofst << bms.str();
-    // }
 
-    // // image the beta matrix:
-    // unsigned xwidth  = nptch;
-    // unsigned xheight = nptch;
-    // unsigned int imscalar = 4;
-    // static vector<unsigned char> ximage;
-    // ximage.resize(xwidth*xheight*imscalar);
-    // for(unsigned y = 0; y < xheight; y++){
-    //   for(unsigned x = 0; x < xwidth;  x++) {
-    //     ximage[imscalar * xwidth * y + imscalar * x + 0] = 255;
-    //     ximage[imscalar * xwidth * y + imscalar * x + 1] = 255 - (static_cast<unsigned>(floor(  betaMatrix[y][x] * 255)));
-    //     ximage[imscalar * xwidth * y + imscalar * x + 2] = 255;
-    //     ximage[imscalar * xwidth * y + imscalar * x + 3] = 255;
-    //   }
-    // }
-    // std::stringstream bmgss;
-    // bmgss << "connectivity_matrix.png";
-    // std::string bmg_str = bmgss.str();
-    // encodeOneStep(bmg_str.c_str(), ximage, xwidth, xheight);
 
     vector<int> cpt;  //cpt is a vector of patch numbers. we start at a different patch number at every time step.
     cpt.reserve(nptch);
