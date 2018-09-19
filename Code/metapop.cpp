@@ -32,7 +32,7 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-#include "mixingMatrices/BetaMc0.1.hpp"
+#include "mixingMatrices/BetaMc0.1_norm.hpp"
 #define loadbmat 1
 
 
@@ -482,8 +482,13 @@ epistepTSIRVmetaAge(
         if(mRate > 10.){
             mRate = 10.;
             }
-                
-        vRate = 0.01;
+        mRate /= 10.;
+        vRate = 0.00;
+        
+        if((vRate+mRate)<0.001)
+        {
+            vRate = 0.001;
+        }
         
         std::poisson_distribution<int> pDist(vRate+mRate);
         int intros = pDist(generator);
