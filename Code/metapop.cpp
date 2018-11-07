@@ -32,7 +32,7 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-#include "mixingMatrices/BetaMc0.1_norm.hpp"
+#include "mixingMatrices/BetaMc2.0_norm.hpp"
 #define loadbmat 1
 
 
@@ -439,31 +439,15 @@ epistepTSIRVmetaAge(
 
 	    float tpop = loc_S + loc_I + loc_R + loc_V;
 
-	    float BetaN = (Beta*pars.betamean)/tpop; //  "Beta" here is merely the seasonal component
+        //float BetaN = (Beta*pars.betamean)/tpop; //  "Beta" here is merely the seasonal component
+        float BetaN = pars.betamean/tpop;
         
-        std::random_device r;
-        std::seed_seq seed_seq{r(),r(),r()};
-        std::mt19937 generator{seed_seq};
-        //std::default_random_engine generator();
-	    
+        
 
 	    // S′ = −βSI,
 	    possibleSs = loc_S + (-BetaN * loc_S*loc_I);
 	    // R′ = αI
 	    possibleRs = loc_R + (alpha * loc_I);
-	    // I′ =βSI−αI,
-	    possibleIs = loc_I + (BetaN * loc_S*loc_I) - (alpha * loc_I);
-
-	    if(possibleIs < 0 ) {
-		//assert(possibleIs > 0 );
-		possibleIs = 0;
-	    }
-	    if(possibleIs>loc_S) {
-		//assert(possibleIs<loc_S);
-		possibleIs=loc_S;
-	    }
-
-	    tsi += possibleIs;
 
         /*float v1 = rand();
         if(v1>0.99){
@@ -479,21 +463,42 @@ epistepTSIRVmetaAge(
                 {mRate += 0.;}
             }
         }
-        if(mRate > 10.){
+/* if(mRate > 10.){
             mRate = 10.;
-            }
+            }*/
         mRate /= 10.;
-        vRate = 0.00;
+        vRate = 0.000;
         
-        if((vRate+mRate)<0.001)
+        if((vRate+mRate)<0.00005)
         {
-            vRate = 0.001;
+            vRate = 0.00005;
         }
+        
+        // std::default_random_engine generator(time(0)*(ii+j));
+        std::random_device r;
+        std::seed_seq seed_seq{r()};
+        std::mt19937 generator{seed_seq};
         
         std::poisson_distribution<int> pDist(vRate+mRate);
         int intros = pDist(generator);
-        //std::cout << "intro:" << intros << std::endl;
-        //std::cout <<"rate: " << mRate << " intros " << intros << std::endl;
+        
+        // I′ =βSI−αI,
+        possibleIs = loc_I + (BetaN * loc_S*(loc_I+intros)) - (alpha * loc_I);
+        
+        if(possibleIs < 0 ) {
+            //assert(possibleIs > 0 );
+            possibleIs = 0;
+        }
+        if(possibleIs>loc_S) {
+            //assert(possibleIs<loc_S);
+            possibleIs=loc_S;
+        }
+        
+        tsi += possibleIs;
+       
+        
+        //std::cout << "generator:" << generator << std::endl;
+        //std::cout <<"rate: " << mRate+vRate << " intros " << intros << std::endl;
         
         possibleIs += intros;
 
