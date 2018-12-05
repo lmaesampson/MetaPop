@@ -32,8 +32,8 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-#include "mixingMatrices/BetaMc2.0_norm.hpp"
-#define loadbmat 1
+#include "mixingMatrices/BetaMc4.0_norm.hpp"
+#define loadbmat 0
 
 
 template <class T>
@@ -466,7 +466,7 @@ epistepTSIRVmetaAge(
 /* if(mRate > 10.){
             mRate = 10.;
             }*/
-        mRate /= 10.;
+        mRate /= 1000.;
         vRate = 0.000;
         
         if((vRate+mRate)<0.00005)
@@ -880,7 +880,7 @@ void epimeta(int iter,
 
     //float betameanPP	= betamean/patchpop;
     float alpha		= 0.986;
-    float seas		= 0.3;
+    float seas		= 1.;
     int T		= timesteps;
 
     vector<float> vax, sax;
