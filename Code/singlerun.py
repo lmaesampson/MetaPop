@@ -45,20 +45,20 @@ def run_process_limited_time(max_seconds,argdict):
 def main():
 
     argdict = { 'beta'            : 16,
-                'maxvaccprob'     : 0.9,
+                'maxvaccprob'     : 0.,
                 'minvaccprob'     : 0.,   #this serves as the standard deviation in max. vacc. prob.
-                'timesteps'       : 10000,
-                'patchpop'        : 10000,
+                'timesteps'       : 1000,
+                'patchpop'        : 5000,
                 'birthrate'       : 10.,
                 'popstddev'       : 0.,
                 'images'          : 0,
                 'logs'            : 1,
-                'fn'              : "payload",
+                'fn'              : "rand_beta",
                 'iter'            : 1,
                 'stochastic'      : 0
                 }
 
-    run_process_limited_time(20,argdict)
+    run_process_limited_time(2000,argdict)
 
 
 
