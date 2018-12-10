@@ -1,3 +1,4 @@
+
 #include <cstdlib>
 #include <cmath>
 #include <string>
@@ -32,7 +33,7 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-#include "mixingMatrices/BetaMc4.0_norm.hpp"
+//#include "mixingMatrices/BetaMc4.0_norm.hpp"
 #define loadbmat 0
 
 
@@ -439,8 +440,8 @@ epistepTSIRVmetaAge(
 
 	    float tpop = loc_S + loc_I + loc_R + loc_V;
 
-        //float BetaN = (Beta*pars.betamean)/tpop; //  "Beta" here is merely the seasonal component
-        float BetaN = pars.betamean/tpop;
+        float BetaN = (Beta*pars.betamean)/tpop; //  "Beta" here is merely the seasonal component
+        //float BetaN = pars.betamean/tpop;
         
         
 
@@ -466,13 +467,13 @@ epistepTSIRVmetaAge(
 /* if(mRate > 10.){
             mRate = 10.;
             }*/
-        mRate /= 1000.;
-        vRate = 0.000;
+        mRate /= 100.;
+        vRate = 0.001;
         
-        if((vRate+mRate)<0.00005)
+        /*if((vRate+mRate)<0.00005)
         {
             vRate = 0.00005;
-        }
+        }*/
         
         // std::default_random_engine generator(time(0)*(ii+j));
         std::random_device r;
@@ -623,8 +624,8 @@ epiTSIRVmeta(
         static std::array<std::array<float, nptch>, nptch> sbetaMatrix;
     }
     auto rand_unif = bind(uniform_real_distribution<> {0.0,1.0},default_random_engine{});   //random mixing matrix, or can load betaMatrix from a file.
-    if(loadbmat) {
-      betaMatrix = sbetaMatrix;
+    if(loadbmat==1) {
+     // betaMatrix = sbetaMatrix;
     }
     else
     {
@@ -1126,10 +1127,10 @@ void epimeta(int iter,
 
 int main(int argc, char** argv)
 {
-    if(loadbmat)
-    {
-    #include "betamtest.hpp"
-    }
+   // if(loadbmat==1)
+    //{
+    //#include "betamtest.hpp"
+    //}
 
     int timesteps = 420;
 
@@ -1217,7 +1218,7 @@ int main(int argc, char** argv)
     }
 
 
-    vector<int> patchtargets = {223,1125};
+    vector<int> patchtargets = {0,5};
     // get patch targets to seed infection:
     // for (int i = 1; i < argc; i++) {
     //   if (i + 1 != argc) {

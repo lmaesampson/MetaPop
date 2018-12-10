@@ -45,15 +45,15 @@ def run_process_limited_time(max_seconds,argdict):
 def main():
 
     argdict = { 'beta'            : 16,
-                'maxvaccprob'     : 0.,
+                'maxvaccprob'     : 0.8,
                 'minvaccprob'     : 0.,   #this serves as the standard deviation in max. vacc. prob.
-                'timesteps'       : 1000,
-                'patchpop'        : 5000,
+                'timesteps'       : 2000,
+                'patchpop'        : 50000,
                 'birthrate'       : 10.,
                 'popstddev'       : 0.,
                 'images'          : 0,
                 'logs'            : 1,
-                'fn'              : "rand_beta",
+                'fn'              : "rand_beta_smallgrid",
                 'iter'            : 1,
                 'stochastic'      : 0
                 }
