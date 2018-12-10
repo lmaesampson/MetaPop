@@ -33,8 +33,8 @@ constexpr int lnumtarg = 1212;  //patch where infecteds are introduced
 constexpr float pi = 3.14159265359;
 constexpr int targnum = 10;     //numer of infecteds introduced
 
-//#include "mixingMatrices/BetaMc4.0_norm.hpp"
-#define loadbmat 0
+#include "mixingMatrices/BetaMc4.0_norm.hpp"
+#define loadbmat 1
 
 
 template <class T>
@@ -464,16 +464,14 @@ epistepTSIRVmetaAge(
                 {mRate += 0.;}
             }
         }
-/* if(mRate > 10.){
-            mRate = 10.;
-            }*/
-        mRate /= 100.;
-        vRate = 0.001;
         
-        /*if((vRate+mRate)<0.00005)
+        mRate /= 10.;
+        vRate = 0.0;
+        
+        if((vRate+mRate)<0.0001)
         {
-            vRate = 0.00005;
-        }*/
+            vRate = 0.0001;
+        }
         
         // std::default_random_engine generator(time(0)*(ii+j));
         std::random_device r;
@@ -625,7 +623,7 @@ epiTSIRVmeta(
     }
     auto rand_unif = bind(uniform_real_distribution<> {0.0,1.0},default_random_engine{});   //random mixing matrix, or can load betaMatrix from a file.
     if(loadbmat==1) {
-     // betaMatrix = sbetaMatrix;
+      betaMatrix = sbetaMatrix;
     }
     else
     {
@@ -1127,10 +1125,10 @@ void epimeta(int iter,
 
 int main(int argc, char** argv)
 {
-   // if(loadbmat==1)
-    //{
-    //#include "betamtest.hpp"
-    //}
+   /* if(loadbmat==1)
+    {
+    #include "betamtest.hpp"
+    }*/
 
     int timesteps = 420;
 
