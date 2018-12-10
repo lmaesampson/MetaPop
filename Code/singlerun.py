@@ -47,7 +47,7 @@ def main():
     argdict = { 'beta'            : 16,
                 'maxvaccprob'     : 0.8,
                 'minvaccprob'     : 0.,   #this serves as the standard deviation in max. vacc. prob.
-                'timesteps'       : 2000,
+                'timesteps'       : 24*50,
                 'patchpop'        : 50000,
                 'birthrate'       : 10.,
                 'popstddev'       : 0.,

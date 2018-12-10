@@ -881,7 +881,7 @@ void epimeta(int iter,
 
     //float betameanPP	= betamean/patchpop;
     float alpha		= 0.986;
-    float seas		= 1.;
+    float seas		= 0.5;
     int T		= timesteps;
 
     vector<float> vax, sax;
