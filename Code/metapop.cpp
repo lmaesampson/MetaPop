@@ -465,8 +465,8 @@ epistepTSIRVmetaAge(
             }
         }
         
-        mRate /= 10.;
-        vRate = 0.0;
+        mRate /= 5.;
+        vRate = 0.0001; //If the virgin introduction rate is always set to zero (which it has been for many simulations), do you lose the 'white noise' effect that changes ecc?
         
         if((vRate+mRate)<0.0001)
         {
@@ -879,7 +879,7 @@ void epimeta(int iter,
 
     //float betameanPP	= betamean/patchpop;
     float alpha		= 0.986;
-    float seas		= 0.5;
+    float seas		= 0.0;
     int T		= timesteps;
 
     vector<float> vax, sax;
@@ -989,7 +989,7 @@ void epimeta(int iter,
 	// Remove betameanPP:
 	//float nv = betameanPP * (1.0 + seas * cos(2.0*pi*((bi)/24.0)));
 	// Just save the seasonal component:
-	float nv =  (1.0 + seas * cos(2.0*pi*((bi)/24.0)));  //vector that's really just a cosine. 24 timesteps per year
+    float nv =  (1.0 + seas * cos(2.0*pi*((bi)/24.0)));///(1.+seas);  //vector that's really just a cosine. 24 timesteps per year.
 	singlebetaseas.push_back(nv);
     }
 
